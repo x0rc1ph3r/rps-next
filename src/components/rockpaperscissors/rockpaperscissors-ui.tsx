@@ -108,59 +108,65 @@ function RockpaperscissorsCard({ account }: { account: PublicKey }) {
           <p>{player1.toString()}</p>
           <p>{player2.toString()}</p>
           <div className="card-actions justify-around">
-            {roomStatus.waitingForPlayer && <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => joinRoom.mutateAsync(roomId)}
-              disabled={joinRoom.isPending}
-            >
-              Join Room
-            </button>}
-            {roomStatus.waitingForMoves && <div>
-              <input
-                type='text'
-                placeholder='Move'
-                value={toMove}
-                onChange={(e) => { setToMove(e.target.value) }}
-                className='input input-bordered w-full max max-w-xs'
-              />
-              <input
-                type='text'
-                placeholder='Salt'
-                value={moveSalt}
-                onChange={(e) => { setMoveSalt(e.target.value) }}
-                className='input input-bordered w-full max max-w-xs'
-              />
-              <button
+            {//@ts-ignore
+              roomStatus.waitingForPlayer && <button
                 className="btn btn-xs lg:btn-md btn-outline"
-                onClick={() => playerMove.mutateAsync({ roomId: roomId, moveHash: Array.from(generateHashedMove(toMove, moveSalt)) })}
-                disabled={playerMove.isPending}
+                onClick={() => joinRoom.mutateAsync(roomId)}
+                disabled={joinRoom.isPending}
               >
-                Make Move
-              </button></div>}
-            {roomStatus.waitingForReveal && <div>
-              <input
-                type='text'
-                placeholder='Move'
-                value={toMove}
-                onChange={(e) => { setToMove(e.target.value) }}
-                className='input input-bordered w-full max max-w-xs'
-              />
-              <input
-                type='text'
-                placeholder='Salt'
-                value={moveSalt}
-                onChange={(e) => { setMoveSalt(e.target.value) }}
-                className='input input-bordered w-full max max-w-xs'
-              /><button
-                className="btn btn-xs lg:btn-md btn-outline"
-                onClick={() => revealMove.mutateAsync({ roomId: roomId, move: toMove, salt: moveSalt, player1: player1.toString(), player2: player2.toString() })}
-                disabled={revealMove.isPending}
-              >
-                Reveal Move
-              </button></div>}
-            {roomStatus.complete && roomRes.player1Wins && <p className="card-title justify-center text-3xl">Player 1 wins!</p>}
-            {roomStatus.complete && roomRes.player2Wins && <p className="card-title justify-center text-3xl">Player 2 wins!</p>}
-            {roomStatus.complete && roomRes.draw && <p className="card-title justify-center text-3xl">It&apos;s a draw</p>}
+                Join Room
+              </button>}
+            {//@ts-ignore
+              roomStatus.waitingForMoves && <div>
+                <input
+                  type='text'
+                  placeholder='Move'
+                  value={toMove}
+                  onChange={(e) => { setToMove(e.target.value) }}
+                  className='input input-bordered w-full max max-w-xs'
+                />
+                <input
+                  type='text'
+                  placeholder='Salt'
+                  value={moveSalt}
+                  onChange={(e) => { setMoveSalt(e.target.value) }}
+                  className='input input-bordered w-full max max-w-xs'
+                />
+                <button
+                  className="btn btn-xs lg:btn-md btn-outline"
+                  onClick={() => playerMove.mutateAsync({ roomId: roomId, moveHash: Array.from(generateHashedMove(toMove, moveSalt)) })}
+                  disabled={playerMove.isPending}
+                >
+                  Make Move
+                </button></div>}
+            {//@ts-ignore
+              roomStatus.waitingForReveal && <div>
+                <input
+                  type='text'
+                  placeholder='Move'
+                  value={toMove}
+                  onChange={(e) => { setToMove(e.target.value) }}
+                  className='input input-bordered w-full max max-w-xs'
+                />
+                <input
+                  type='text'
+                  placeholder='Salt'
+                  value={moveSalt}
+                  onChange={(e) => { setMoveSalt(e.target.value) }}
+                  className='input input-bordered w-full max max-w-xs'
+                /><button
+                  className="btn btn-xs lg:btn-md btn-outline"
+                  onClick={() => revealMove.mutateAsync({ roomId: roomId, move: toMove, salt: moveSalt, player1: player1.toString(), player2: player2.toString() })}
+                  disabled={revealMove.isPending}
+                >
+                  Reveal Move
+                </button></div>}
+            {//@ts-ignore
+              roomStatus.complete && roomRes.player1Wins && <p className="card-title justify-center text-3xl">Player 1 wins!</p>}
+            {//@ts-ignore
+              roomStatus.complete && roomRes.player2Wins && <p className="card-title justify-center text-3xl">Player 2 wins!</p>}
+            {//@ts-ignore
+              roomStatus.complete && roomRes.draw && <p className="card-title justify-center text-3xl">It&apos;s a draw</p>}
           </div>
           <div className="text-center space-y-4">
             <p>

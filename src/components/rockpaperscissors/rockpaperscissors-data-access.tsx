@@ -80,7 +80,7 @@ export function useRockpaperscissorsProgramAccount({ account }: { account: Publi
 
   const joinRoom = useMutation({
     mutationKey: ['rockpaperscissors', 'join', { cluster, account }],
-    mutationFn: (roomId: number) => program.methods.joinRoom(new BN(roomId)).rpc(),
+    mutationFn: (roomId: number | BN) => program.methods.joinRoom(new BN(roomId)).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx)
       return accounts.refetch()
