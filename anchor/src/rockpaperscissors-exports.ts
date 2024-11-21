@@ -21,7 +21,7 @@ export function getRockpaperscissorsProgramId(cluster: Cluster) {
     case 'devnet':
     case 'testnet':
       // This is the program ID for the Rockpaperscissors program on devnet and testnet.
-      return new PublicKey('CounNZdmsQmWh7uVngV9FXW2dZ6zAgbJyYsvBpqbykg')
+      return new PublicKey('9YTcpmZVVy2Gb87SvGTCc2oF59RB9nfjtnUeV2EmGGkW')
     case 'mainnet-beta':
     default:
       return ROCKPAPERSCISSORS_PROGRAM_ID

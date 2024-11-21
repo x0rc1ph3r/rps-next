@@ -1,23 +1,52 @@
 'use client'
 
-import { Keypair, PublicKey } from '@solana/web3.js'
-import { useMemo } from 'react'
-import { ellipsify } from '../ui/ui-layout'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { useMemo, useState } from 'react'
 import { ExplorerLink } from '../cluster/cluster-ui'
+import { ellipsify } from '../ui/ui-layout'
 import { useRockpaperscissorsProgram, useRockpaperscissorsProgramAccount } from './rockpaperscissors-data-access'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { keccak256 } from 'ethereum-cryptography/keccak';
+
+function generateHashedMove(playerMove: string, salt: string) {
+  const concatenated = new TextEncoder().encode(`${playerMove}${salt}`);
+  const hashed = keccak256(concatenated);
+  return hashed;
+}
 
 export function RockpaperscissorsCreate() {
-  const { initialize } = useRockpaperscissorsProgram()
+  const { createRoom } = useRockpaperscissorsProgram()
+  const { publicKey } = useWallet();
+  const [roomNo, setRoomNo] = useState(1);
+  const [entryFee, setEntryFee] = useState(0);
 
-  return (
-    <button
-      className="btn btn-xs lg:btn-md btn-primary"
-      onClick={() => initialize.mutateAsync(Keypair.generate())}
-      disabled={initialize.isPending}
-    >
-      Create {initialize.isPending && '...'}
-    </button>
-  )
+  if (publicKey) {
+    return (
+      <div>
+        <input
+          type='number'
+          placeholder='Room id'
+          value={roomNo}
+          onChange={(e) => { setRoomNo(parseInt(e.target.value)) }}
+          className='input input-bordered w-full max max-w-xs'
+        />
+        <input
+          type='number'
+          placeholder='Entry Fees'
+          value={entryFee}
+          onChange={(e) => { setEntryFee(parseInt(e.target.value)) }}
+          className='input input-bordered w-full max max-w-xs'
+        />
+        <button
+          className="btn btn-xs lg:btn-md btn-primary"
+          onClick={() => createRoom.mutateAsync({ roomId: roomNo, entryFee: entryFee * LAMPORTS_PER_SOL })}
+          disabled={createRoom.isPending}
+        >
+          Create Room {createRoom.isPending && '...'}
+        </button>
+      </div>
+    )
+  }
 }
 
 export function RockpaperscissorsList() {
@@ -54,11 +83,18 @@ export function RockpaperscissorsList() {
 }
 
 function RockpaperscissorsCard({ account }: { account: PublicKey }) {
-  const { accountQuery, incrementMutation, setMutation, decrementMutation, closeMutation } = useRockpaperscissorsProgramAccount({
+  const { accountQuery, joinRoom, playerMove, revealMove } = useRockpaperscissorsProgramAccount({
     account,
   })
+  const [toMove, setToMove] = useState("")
+  const [moveSalt, setMoveSalt] = useState("")
 
-  const count = useMemo(() => accountQuery.data?.count ?? 0, [accountQuery.data?.count])
+  const count = useMemo(() => accountQuery.data?.roomId ?? 0, [accountQuery.data?.roomId])
+  const player1 = useMemo(() => accountQuery.data?.player1 ?? 0, [accountQuery.data?.player1])
+  const player2 = useMemo(() => accountQuery.data?.player2 ?? 0, [accountQuery.data?.player2])
+  const roomId = useMemo(() => accountQuery.data?.roomId ?? 0, [accountQuery.data?.roomId])
+  const roomStatus = useMemo(() => accountQuery.data?.status ?? 0, [accountQuery.data?.status])
+  const roomRes = useMemo(() => accountQuery.data?.result ?? 0, [accountQuery.data?.result])
 
   return accountQuery.isLoading ? (
     <span className="loading loading-spinner loading-lg"></span>
@@ -67,53 +103,69 @@ function RockpaperscissorsCard({ account }: { account: PublicKey }) {
       <div className="card-body items-center text-center">
         <div className="space-y-6">
           <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountQuery.refetch()}>
-            {count}
+            {count.toString()}
           </h2>
+          <p>{player1.toString()}</p>
+          <p>{player2.toString()}</p>
           <div className="card-actions justify-around">
-            <button
+            {roomStatus.waitingForPlayer && <button
               className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => incrementMutation.mutateAsync()}
-              disabled={incrementMutation.isPending}
+              onClick={() => joinRoom.mutateAsync(roomId)}
+              disabled={joinRoom.isPending}
             >
-              Increment
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => {
-                const value = window.prompt('Set value to:', count.toString() ?? '0')
-                if (!value || parseInt(value) === count || isNaN(parseInt(value))) {
-                  return
-                }
-                return setMutation.mutateAsync(parseInt(value))
-              }}
-              disabled={setMutation.isPending}
-            >
-              Set
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => decrementMutation.mutateAsync()}
-              disabled={decrementMutation.isPending}
-            >
-              Decrement
-            </button>
+              Join Room
+            </button>}
+            {roomStatus.waitingForMoves && <div>
+              <input
+                type='text'
+                placeholder='Move'
+                value={toMove}
+                onChange={(e) => { setToMove(e.target.value) }}
+                className='input input-bordered w-full max max-w-xs'
+              />
+              <input
+                type='text'
+                placeholder='Salt'
+                value={moveSalt}
+                onChange={(e) => { setMoveSalt(e.target.value) }}
+                className='input input-bordered w-full max max-w-xs'
+              />
+              <button
+                className="btn btn-xs lg:btn-md btn-outline"
+                onClick={() => playerMove.mutateAsync({ roomId: roomId, moveHash: Array.from(generateHashedMove(toMove, moveSalt)) })}
+                disabled={playerMove.isPending}
+              >
+                Make Move
+              </button></div>}
+            {roomStatus.waitingForReveal && <div>
+              <input
+                type='text'
+                placeholder='Move'
+                value={toMove}
+                onChange={(e) => { setToMove(e.target.value) }}
+                className='input input-bordered w-full max max-w-xs'
+              />
+              <input
+                type='text'
+                placeholder='Salt'
+                value={moveSalt}
+                onChange={(e) => { setMoveSalt(e.target.value) }}
+                className='input input-bordered w-full max max-w-xs'
+              /><button
+                className="btn btn-xs lg:btn-md btn-outline"
+                onClick={() => revealMove.mutateAsync({ roomId: roomId, move: toMove, salt: moveSalt, player1: player1.toString(), player2: player2.toString() })}
+                disabled={revealMove.isPending}
+              >
+                Reveal Move
+              </button></div>}
+            {roomStatus.complete && roomRes.player1Wins && <p className="card-title justify-center text-3xl">Player 1 wins!</p>}
+            {roomStatus.complete && roomRes.player2Wins && <p className="card-title justify-center text-3xl">Player 2 wins!</p>}
+            {roomStatus.complete && roomRes.draw && <p className="card-title justify-center text-3xl">It's a draw</p>}
           </div>
           <div className="text-center space-y-4">
             <p>
               <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
             </p>
-            <button
-              className="btn btn-xs btn-secondary btn-outline"
-              onClick={() => {
-                if (!window.confirm('Are you sure you want to close this account?')) {
-                  return
-                }
-                return closeMutation.mutateAsync()
-              }}
-              disabled={closeMutation.isPending}
-            >
-              Close
-            </button>
           </div>
         </div>
       </div>

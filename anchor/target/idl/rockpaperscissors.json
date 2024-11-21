@@ -1,5 +1,5 @@
 {
-  "address": "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ",
+  "address": "9YTcpmZVVy2Gb87SvGTCc2oF59RB9nfjtnUeV2EmGGkW",
   "metadata": {
     "name": "rockpaperscissors",
     "version": "0.1.0",
@@ -8,92 +8,98 @@
   },
   "instructions": [
     {
-      "name": "close",
+      "name": "create_room",
       "discriminator": [
+        130,
+        166,
+        32,
+        2,
+        247,
+        120,
+        178,
+        53
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "room_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "room_id",
+          "type": "u64"
+        },
+        {
+          "name": "entry_fee",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_treasury",
+      "discriminator": [
+        254,
         98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
+        217,
+        51,
+        25,
+        88,
+        140,
+        45
       ],
       "accounts": [
         {
-          "name": "payer",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "rockpaperscissors",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "rockpaperscissors",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "rockpaperscissors",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
+          "name": "treasury",
           "writable": true,
-          "signer": true
-        },
-        {
-          "name": "rockpaperscissors",
-          "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
         },
         {
           "name": "system_program",
@@ -103,54 +109,456 @@
       "args": []
     },
     {
-      "name": "set",
+      "name": "join_room",
       "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
+        95,
+        232,
+        188,
+        81,
+        124,
+        130,
+        78,
+        139
       ],
       "accounts": [
         {
-          "name": "rockpaperscissors",
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "room_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_room_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "reveal_move",
+      "discriminator": [
+        30,
+        133,
+        198,
+        26,
+        106,
+        44,
+        55,
+        149
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "room_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasurer",
+          "writable": true
+        },
+        {
+          "name": "player1",
+          "writable": true
+        },
+        {
+          "name": "player2",
+          "writable": true
+        },
+        {
+          "name": "winner",
           "writable": true
         }
       ],
       "args": [
         {
-          "name": "value",
-          "type": "u8"
+          "name": "_room_id",
+          "type": "u64"
+        },
+        {
+          "name": "original_move",
+          "type": "string"
+        },
+        {
+          "name": "salt",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "set_treasury",
+      "discriminator": [
+        57,
+        97,
+        196,
+        95,
+        195,
+        206,
+        106,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "treasurer",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "treasury"
+          ]
+        },
+        {
+          "name": "treasury",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_treasurer",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "submit_move",
+      "discriminator": [
+        104,
+        116,
+        228,
+        7,
+        60,
+        63,
+        48,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "room",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  111,
+                  109
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "room_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "_room_id",
+          "type": "u64"
+        },
+        {
+          "name": "hashed_move",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
         }
       ]
     }
   ],
   "accounts": [
     {
-      "name": "Rockpaperscissors",
+      "name": "Room",
       "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
+        156,
+        199,
+        67,
+        27,
+        222,
+        23,
+        185,
+        94
       ]
+    },
+    {
+      "name": "Treasury",
+      "discriminator": [
+        238,
+        239,
+        123,
+        238,
+        89,
+        1,
+        168,
+        253
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "RoomNotJoinable",
+      "msg": "The room is not joinable."
+    },
+    {
+      "code": 6001,
+      "name": "CannotJoinOwnRoom",
+      "msg": "Cannot join your own room."
+    },
+    {
+      "code": 6002,
+      "name": "NotAPlayer",
+      "msg": "You are not a player in this room."
+    },
+    {
+      "code": 6003,
+      "name": "RoomNotReady",
+      "msg": "The game is not ready yet."
+    },
+    {
+      "code": 6004,
+      "name": "InvalidMoveReveal",
+      "msg": "Invalid move reveal."
+    },
+    {
+      "code": 6005,
+      "name": "MoveAlreadySubmitted",
+      "msg": "Move already submitted."
+    },
+    {
+      "code": 6006,
+      "name": "IncompleteGame",
+      "msg": "The game is incomplete."
+    },
+    {
+      "code": 6007,
+      "name": "InvalidMove",
+      "msg": "Invalid move."
+    },
+    {
+      "code": 6008,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds to join the room."
+    },
+    {
+      "code": 6009,
+      "name": "WrongWinner",
+      "msg": "Wrong Winner"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidTreasurer",
+      "msg": "Invalid Treasurer"
     }
   ],
   "types": [
     {
-      "name": "Rockpaperscissors",
+      "name": "GameResult",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Player1Wins"
+          },
+          {
+            "name": "Player2Wins"
+          },
+          {
+            "name": "Draw"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Room",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "count",
+            "name": "room_id",
+            "type": "u64"
+          },
+          {
+            "name": "player1",
+            "type": "pubkey"
+          },
+          {
+            "name": "player2",
+            "type": "pubkey"
+          },
+          {
+            "name": "player1_hashed_move",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "player2_hashed_move",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "player1_move",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "player2_move",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "RoomStatus"
+              }
+            }
+          },
+          {
+            "name": "result",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "GameResult"
+                }
+              }
+            }
+          },
+          {
+            "name": "entry_fee",
+            "type": "u64"
+          },
+          {
+            "name": "deposit_total",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoomStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "WaitingForPlayer"
+          },
+          {
+            "name": "WaitingForMoves"
+          },
+          {
+            "name": "WaitingForReveal"
+          },
+          {
+            "name": "Complete"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Treasury",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "treasurer",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
             "type": "u8"
           }
         ]
