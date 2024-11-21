@@ -18,12 +18,12 @@ interface CreateArgs {
 }
 
 interface MoveArgs {
-  roomId: number;
+  roomId: number | BN;
   moveHash: Array<number>;
 }
 
 interface RevealArgs {
-  roomId: number;
+  roomId: number | BN;
   move: string;
   salt: string;
   player1: string;

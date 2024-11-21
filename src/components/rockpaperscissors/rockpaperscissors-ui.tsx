@@ -160,7 +160,7 @@ function RockpaperscissorsCard({ account }: { account: PublicKey }) {
               </button></div>}
             {roomStatus.complete && roomRes.player1Wins && <p className="card-title justify-center text-3xl">Player 1 wins!</p>}
             {roomStatus.complete && roomRes.player2Wins && <p className="card-title justify-center text-3xl">Player 2 wins!</p>}
-            {roomStatus.complete && roomRes.draw && <p className="card-title justify-center text-3xl">It's a draw</p>}
+            {roomStatus.complete && roomRes.draw && <p className="card-title justify-center text-3xl">It&apos;s a draw</p>}
           </div>
           <div className="text-center space-y-4">
             <p>
