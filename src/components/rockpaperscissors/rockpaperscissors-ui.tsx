@@ -18,7 +18,7 @@ export function RockpaperscissorsCreate() {
   const { createRoom } = useRockpaperscissorsProgram()
   const { publicKey } = useWallet();
   const [roomNo, setRoomNo] = useState(1);
-  const [entryFee, setEntryFee] = useState(0);
+  const [entryFee, setEntryFee] = useState("");
 
   if (publicKey) {
     return (
@@ -31,15 +31,20 @@ export function RockpaperscissorsCreate() {
           className='input input-bordered w-full max max-w-xs'
         />
         <input
-          type='number'
+          type="text"
           placeholder='Entry Fees'
           value={entryFee}
-          onChange={(e) => { setEntryFee(parseInt(e.target.value)) }}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            if (/^\d*\.?\d*$/.test(inputValue)) {
+              setEntryFee(inputValue);
+            }
+          }}
           className='input input-bordered w-full max max-w-xs'
         />
         <button
           className="btn btn-xs lg:btn-md btn-primary"
-          onClick={() => createRoom.mutateAsync({ roomId: roomNo, entryFee: entryFee * LAMPORTS_PER_SOL })}
+          onClick={() => createRoom.mutateAsync({ roomId: roomNo, entryFee: parseFloat(entryFee) * LAMPORTS_PER_SOL })}
           disabled={createRoom.isPending}
         >
           Create Room {createRoom.isPending && '...'}
